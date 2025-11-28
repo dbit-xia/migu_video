@@ -1,5 +1,6 @@
 import http from "node:http"
 import fs from "node:fs";
+import fsPromises from "node:fs/promises";
 import { getAndroidURL, getAndroidURL720p } from "./utils/androidURL.js";
 import { readFileSync } from "./utils/fileUtil.js";
 import { host, port, rateType, token, userId, ipWhiteFile } from "./config.js";
@@ -76,7 +77,7 @@ const server = http.createServer(async (req, res) => {
   if (urlParsed.pathname === "/" || urlParsed.pathname === "/interface.txt") {
     try {
       // 读取文件内容
-      let data = readFileSync(process.cwd() + "/interface.txt");
+      let data = await fsPromises.readFile(process.cwd() + "/interface.txt");
 
       // 设置响应头
       res.setHeader('Content-Type', 'text/plain;charset=UTF-8');
