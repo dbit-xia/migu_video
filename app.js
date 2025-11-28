@@ -1,11 +1,13 @@
 import http from "node:http"
+import fs from "node:fs";
 import { getAndroidURL, getAndroidURL720p } from "./utils/androidURL.js";
 import { readFileSync } from "./utils/fileUtil.js";
-import { host, port, rateType, token, userId } from "./config.js";
+import { host, port, rateType, token, userId, ipWhiteFile } from "./config.js";
 import { getDateTimeStr } from "./utils/time.js";
 import update from "./updateData.js";
 import { printBlue, printGreen, printGrey, printMagenta, printRed, printYellow } from "./utils/colorOut.js";
 import { delay } from "./utils/fetchList.js";
+import ipRangeCheck from "ip-range-check";
 
 // 运行时长
 var hours = 0
@@ -14,10 +16,40 @@ const urlCache = {}
 
 let loading = false
 
+let ipWhiteList = [];
+function loadIpWhite(){
+  try {
+    const data = fs.readFileSync(ipWhiteFile, 'utf-8');
+    ipWhiteList = data.split(/\r?\n/).filter(line => line.trim() !== '');
+    printBlue("IP白名单已更新")
+    console.log(ipWhiteList)
+  } catch (error) {
+    printRed("IP白名单更新失败")
+    console.log(error)
+  }
+}
+
+loadIpWhite();
+fs.watchFile(ipWhiteFile, async (curr, prev) => {
+  loadIpWhite();
+});
+
+
 const server = http.createServer(async (req, res) => {
 
-  while (loading) {
-    await delay(50)
+  // while (loading) {
+  //   await delay(50)
+  // }
+  const clientIp = req.headers['x-real-ip'] || req.socket.remoteAddress;
+  console.log(`客户端IP: ${clientIp}`);
+  // 检查IP是否在白名单中
+  if (ipWhiteList.length > 0 && !ipRangeCheck(clientIp, ipWhiteList)) {
+    res.writeHead(403, {'Content-Type': 'application/json;charset=UTF-8'});
+    res.end(JSON.stringify({
+      data: '访问被拒绝：403。',
+    }));
+    printRed(`拒绝访问，IP不在白名单中: ${clientIp}`);
+    return;
   }
 
   loading = true
@@ -39,15 +71,19 @@ const server = http.createServer(async (req, res) => {
     return
   }
 
+  const urlParsed = new URL('http://localhost' + url);
   // 响应接口内容
-  if (url == "/" || url == "/interface.txt") {
+  if (urlParsed.pathname === "/" || urlParsed.pathname === "/interface.txt") {
     try {
       // 读取文件内容
-      const data = readFileSync(process.cwd() + "/interface.txt");
+      let data = readFileSync(process.cwd() + "/interface.txt");
 
       // 设置响应头
       res.setHeader('Content-Type', 'text/plain;charset=UTF-8');
       res.statusCode = 200;
+      const queryProtocol = (urlParsed.searchParams.get('protocol')) === 'https' ? 'https' : 'http';
+      data = String(data).replaceAll(host, queryProtocol + '://' + req.headers.host);
+
       res.end(data); // 发送文件内容
 
       loading = false
@@ -56,7 +92,7 @@ const server = http.createServer(async (req, res) => {
 
       res.writeHead(200, { "Content-Type": "application/json;charset=UTF-8" })
       res.end("访问异常")
-      printRed("接口文件响应异常")
+      printRed("接口文件响应异常", error)
 
       loading = false
       return
@@ -80,7 +116,7 @@ const server = http.createServer(async (req, res) => {
 
       res.writeHead(200, { "Content-Type": "application/json;charset=UTF-8" })
       res.end("访问异常")
-      printRed("回放文件响应异常")
+      printRed("回放文件响应异常", error)
       loading = false
       return
     }

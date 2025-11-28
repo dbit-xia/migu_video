@@ -151,7 +151,8 @@ async function getAndroidURL(userId, token, pid, rateType) {
   let headers = {
     AppVersion: 2600037000,
     TerminalId: "android",
-    "X-UP-CLIENT-CHANNEL-ID": "2600037000-99000-200300220100002"
+    "X-UP-CLIENT-CHANNEL-ID": "2600037000-99000-200300220100002",
+    "host": process.env.APP_PLAY_HOST
   }
 
   // 广东卫视有些特殊
@@ -224,7 +225,8 @@ async function getAndroidURL720p(pid) {
   let headers = {
     AppVersion: 2600000900,
     TerminalId: "android",
-    "X-UP-CLIENT-CHANNEL-ID": "2600000900-99000-201600010010027"
+    "X-UP-CLIENT-CHANNEL-ID": "2600000900-99000-201600010010027",
+    "host": process.env.APP_PLAY_HOST
   }
   // console.log(headers)
   const str = timestramp + pid + appVersion
@@ -240,7 +242,7 @@ async function getAndroidURL720p(pid) {
     rateType = 2
   }
   // 请求
-  const baseURL = "https://play.miguvideo.com/playurl/v1/play/playurl"
+  const baseURL = process.env.APP_PLAY_URL || "https://play.miguvideo.com/playurl/v1/play/playurl"
   const params = "?sign=" + sign + "&rateType=" + rateType
     + "&contId=" + pid + "&timestamp=" + timestramp + "&salt=" + salt
   const respData = await axios.get(baseURL + params, {

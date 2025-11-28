@@ -43,12 +43,12 @@ async function update(hours) {
     // 写入节目
     for (let j = 0; j < data.length; j++) {
       printMagenta(`${data[j].name}：`)
-      const res = await updatePlaybackData(data[j], playbackFile)
-      if (res) {
-        printGreen(`    节目单更新成功`)
-      } else {
-        printRed(`    节目单更新失败`)
-      }
+      // const res = await updatePlaybackData(data[j], playbackFile)
+      // if (res) {
+      //   printGreen(`    节目单更新成功`)
+      // } else {
+      //   printRed(`    节目单更新失败`)
+      // }
 
       if (!(hours % 24)) {
         // 写入节目

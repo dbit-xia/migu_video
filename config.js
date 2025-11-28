@@ -13,4 +13,6 @@ const host = process.env.mhost || "http://localhost:1234"
 // 2标清
 const rateType = process.env.mrateType || 3
 
-export { userId, token, port, host, rateType }
+const ipWhiteFile = process.env.APP_FILE_IP_WHITE || (process.cwd() + "/ipwhite.txt");
+
+export { userId, token, port, host, rateType, ipWhiteFile }
