@@ -170,7 +170,7 @@ async function getAndroidURL(userId, token, pid, rateType) {
   const result = getSaltAndSign(md5)
 
   // 请求
-  const baseURL = "https://play.miguvideo.com/playurl/v1/play/playurl"
+  const baseURL = process.env.APP_PLAY_URL || "https://play.miguvideo.com/playurl/v1/play/playurl"
   let params = "?sign=" + result.sign + "&rateType=" + rateType
     + "&contId=" + pid + "&timestamp=" + timestramp + "&salt=" + result.salt
   let respData = await axios.get(baseURL + params, {
