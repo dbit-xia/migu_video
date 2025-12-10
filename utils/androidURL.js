@@ -146,7 +146,7 @@ async function getAndroidURL720p(pid) {
     headers: headers
   }).then(async r => {
     const text = await r.text();
-    console.log(text);
+    console.log(baseURL + params, 'text:', text);
     return JSON.parse(text);
   })
 
