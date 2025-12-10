@@ -45,8 +45,7 @@ async function getAndroidURL(userId, token, pid, rateType) {
   let headers = {
     AppVersion: 2600037000,
     TerminalId: "android",
-    "X-UP-CLIENT-CHANNEL-ID": "2600037000-99000-200300220100002",
-    "host": process.env.APP_PLAY_HOST
+    "X-UP-CLIENT-CHANNEL-ID": "2600037000-99000-200300220100002"
   }
 
   // 广东卫视有些特殊
@@ -122,8 +121,7 @@ async function getAndroidURL720p(pid) {
   let headers = {
     AppVersion: `${appVersion}`,
     TerminalId: "android",
-    "X-UP-CLIENT-CHANNEL-ID": `${appVersionID}`,
-    "host": process.env.APP_PLAY_HOST
+    "X-UP-CLIENT-CHANNEL-ID": `${appVersionID}`
   }
   // console.log(headers)
   const str = timestramp + pid + appVersion.substring(0, 8)
