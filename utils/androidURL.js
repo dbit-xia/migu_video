@@ -10,7 +10,7 @@ import { printYellow } from "./colorOut.js";
 
 /**
  * @param {string} md5 - md5字符串
- * @returns {SaltSign} - 
+ * @returns {SaltSign} -
  */
 function getSaltAndSign(md5) {
 
@@ -28,7 +28,7 @@ function getSaltAndSign(md5) {
  * @param {string} token - 用户token
  * @param {string} pid - 节目ID
  * @param {number} rateType - 清晰度
- * @returns {object} - 
+ * @returns {object} -
  */
 async function getAndroidURL(userId, token, pid, rateType) {
 
@@ -45,7 +45,8 @@ async function getAndroidURL(userId, token, pid, rateType) {
   let headers = {
     AppVersion: 2600037000,
     TerminalId: "android",
-    "X-UP-CLIENT-CHANNEL-ID": "2600037000-99000-200300220100002"
+    "X-UP-CLIENT-CHANNEL-ID": "2600037000-99000-200300220100002",
+    "host": process.env.APP_PLAY_HOST
   }
 
   // 广东卫视有些特殊
@@ -63,7 +64,7 @@ async function getAndroidURL(userId, token, pid, rateType) {
   const result = getSaltAndSign(md5)
 
   // 请求
-  const baseURL = "https://play.miguvideo.com/playurl/v1/play/playurl"
+  const baseURL = process.env.APP_PLAY_URL || "https://play.miguvideo.com/playurl/v1/play/playurl"
   let params = "?sign=" + result.sign + "&rateType=" + rateType
     + "&contId=" + pid + "&timestamp=" + timestramp + "&salt=" + result.salt
   let respData = await fetch(baseURL + params, {
@@ -111,7 +112,7 @@ async function getAndroidURL(userId, token, pid, rateType) {
 /**
  * 旧版高清画质
  * @param {string} pid - 节目ID
- * @returns {object} - 
+ * @returns {object} -
  */
 async function getAndroidURL720p(pid) {
   // 获取url
@@ -121,7 +122,8 @@ async function getAndroidURL720p(pid) {
   let headers = {
     AppVersion: `${appVersion}`,
     TerminalId: "android",
-    "X-UP-CLIENT-CHANNEL-ID": `${appVersionID}`
+    "X-UP-CLIENT-CHANNEL-ID": `${appVersionID}`,
+    "host": process.env.APP_PLAY_HOST
   }
   // console.log(headers)
   const str = timestramp + pid + appVersion.substring(0, 8)
@@ -137,7 +139,7 @@ async function getAndroidURL720p(pid) {
     rateType = 2
   }
   // 请求
-  const baseURL = "https://play.miguvideo.com/playurl/v1/play/playurl"
+  const baseURL = process.env.APP_PLAY_URL || "https://play.miguvideo.com/playurl/v1/play/playurl"
   const params = "?sign=" + sign + "&rateType=" + rateType
     + "&contId=" + pid + "&timestamp=" + timestramp + "&salt=" + salt
   const respData = await fetch(baseURL + params, {
