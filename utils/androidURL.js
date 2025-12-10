@@ -144,7 +144,11 @@ async function getAndroidURL720p(pid) {
     + "&contId=" + pid + "&timestamp=" + timestramp + "&salt=" + salt
   const respData = await fetch(baseURL + params, {
     headers: headers
-  }).then(r => r.json())
+  }).then(async r => {
+    const text = await r.text();
+    console.log(text);
+    return JSON.parse(text);
+  })
 
   // console.dir(respData, { depth: null })
   const url = respData.body.urlInfo?.url
