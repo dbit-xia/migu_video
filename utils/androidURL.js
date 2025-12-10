@@ -220,20 +220,20 @@ async function getAndroidURL(userId, token, pid, rateType) {
  */
 async function getAndroidURL720p(pid) {
   // 获取url
-  const timestramp = Date.now()
-  const appVersion = "26000009"
+  const timestramp = Math.round(Date.now()).toString()
+  const appVersion = "2600033500"
+  const appVersionID = appVersion + "-99000-201600010010027"
   let headers = {
-    AppVersion: 2600000900,
+    AppVersion: `${appVersion}`,
     TerminalId: "android",
-    "X-UP-CLIENT-CHANNEL-ID": "2600000900-99000-201600010010027",
-    "host": process.env.APP_PLAY_HOST
+    "X-UP-CLIENT-CHANNEL-ID": `${appVersionID}`
   }
   // console.log(headers)
-  const str = timestramp + pid + appVersion
+  const str = timestramp + pid + appVersion.substring(0, 8)
   const md5 = getStringMD5(str)
 
-  const salt = 66666601
-  const suffix = "770fafdf5ba04d279a59ef1600baae98migu6666"
+  const salt = String( Math.floor(Math.random() * 1000000) ).padStart(6, '0') + '80'
+  const suffix = "16d4328df21a4138859388418bd252c2migu" + salt.substring(0, 4)
   const sign = getStringMD5(md5 + suffix)
 
   let rateType = 3
