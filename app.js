@@ -197,10 +197,9 @@ const server = http.createServer(async (req, res) => {
       resObj = await getAndroidURL(userId, token, pid, rateType)
     }
   } catch (error) {
-
     res.writeHead(200, { "Content-Type": "application/json;charset=UTF-8" })
     res.end("链接请求出错，请稍后重试")
-    printRed("链接请求出错")
+    printRed("链接请求出错", error)
     loading = false
     return
   }
